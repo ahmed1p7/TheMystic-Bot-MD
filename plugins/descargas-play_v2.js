@@ -1,4 +1,6 @@
 import fetch from 'node-fetch';
+
+
 let data;
 let buff;
 let mimeType;
@@ -6,7 +8,12 @@ let fileName;
 let apiUrl;
 let enviando = false;
 const handler = async (m, { command, usedPrefix, conn, text }) => {
-  if (!text) throw `_*< DESCARGAS - PLAY v2 />*_\n\n*[ ℹ️ ] Hace falta el título del video de YouTube.*\n\n*[ 💡 ] Ejemplo:* _${usedPrefix + command} Good Feeling - Flo Rida_\n\n*[ 💡 ] Ejemplo 2:* _${usedPrefix + command} https://youtu.be/JLWRZ8eWyZo?si=EmeS9fJvS_OkDk7p_`;
+  const datas = global
+  const idioma = datas.db.data.users[m.sender].language
+  const _translate = JSON.parse(fs.readFileSync(`./language/${idioma}.json`))
+  const tradutor = _translate.plugins.descargas_play_v2
+
+  if (!text) throw `${tradutor.texto1[0]} _${usedPrefix + command} ${tradutor.texto1[1]} _${usedPrefix + command} https://youtu.be/JLWRZ8eWyZo?si=EmeS9fJvS_OkDk7p_`;
 if (enviando) return;
     enviando = true
   try {
@@ -27,7 +34,7 @@ if (enviando) return;
 
     if (!data.resultado || !data.resultado.url) {
       enviando = false;
-      throw `_*< DESCARGAS - PLAY V2 />*_\n\n*[ ℹ️ ] Ocurrió un error. Por favor, inténtalo de nuevo más tarde.*`;
+      throw `${tradutor.texto2}`;
     } else {
       try {      
         if (command === 'play.1') { // play.1 con CFROS API v1 ytmp3
@@ -56,12 +63,12 @@ if (enviando) return;
             }
           } catch {
             enviando = false;
-            throw `_*< DESCARGAS - PLAY V2 />*_\n\n*[ ℹ️ ] Ocurrió un error. Por favor, inténtalo de nuevo más tarde.*`;
+            throw `${tradutor.texto3}`;
           }
        }
     }
 
-    const dataMessage = `_*< DESCARGAS - PLAY V2 />*_\n\n▢ *Título:* ${data.resultado.title}\n\n▢ *Publicado:* ${data.resultado.publicDate}\n\n▢ *Canal:* ${data.resultado.channel}\n\n▢ *Vídeo URL:* ${data.resultado.url}`;
+    const dataMessage = `${tradutor.texto4[0]} ${data.resultado.title}\n${tradutor.texto4[1]} ${data.resultado.publicDate}\n${tradutor.texto4[2]} ${data.resultado.channel}\n${tradutor.texto4[3]} ${data.resultado.url}`;
     await conn.sendMessage(m.chat, { text: dataMessage }, { quoted: m });
 
     if (buff) {
@@ -69,11 +76,11 @@ if (enviando) return;
       enviando = false;
     } else {
       enviando = false;
-      throw `_*< DESCARGAS - PLAY V2 />*_\n\n*[ ℹ️ ] Ocurrió un error. Por favor, inténtalo de nuevo más tarde.*`;
+      throw `${tradutor.texto5}`;
     }
   } catch (error) {
     enviando = false;
-    throw `_*< DESCARGAS - PLAY V2 />*_\n\n*[ ℹ️ ] Ocurrió un error. Por favor, inténtalo de nuevo más tarde.*`;
+    throw tradutor.texto6;
   }
 };
 handler.command = ['play.1', 'play.2'];
